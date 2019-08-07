@@ -24,7 +24,7 @@
             <el-button v-else class="button-new-tag" size="small" @click="showInput('xAxis')">+ 添加数据</el-button>
         </div>
         <div class="axis_data">
-            <h3>图例</h3>
+            <h3>图例数据</h3>
             <el-tag
                 :key="tag"
                 v-for="tag in legend.data"
@@ -48,8 +48,15 @@
 
         <div class="axis_data">
             <h3>节点数据</h3>
-            <div>
-                
+            <div class="data_box">
+                <div class="item" v-for="(item, index) in seriesItems" :key="index">
+                    <span class="item_name">{{item.name}}：</span>
+                    <el-input
+                        placeholder="请输入内容"
+                        v-model="item.data"
+                        clearable>
+                    </el-input>
+                </div>
             </div>
         </div>
 
@@ -57,7 +64,7 @@
         <div class="graphical">
             <h3>折线图</h3>
             <div class="grap_content" ref="graphical">
-
+                
             </div>
         </div>
     </div>
@@ -88,12 +95,22 @@ export default {
                 visible: false,
                 inputValue: ''
             },
-            seriesItems: [
-
-            ]
+            seriesItems: []
         }
     },
     methods: {
+        setSeriesData() {
+            let arr = [];
+            arr = this.legend.data.map(item => {
+                let obj = {};
+                obj.name = item
+                obj.type = 'line',
+                obj.data = '';
+                return obj;
+            })
+
+            this.seriesItems = arr;
+        },
         handleClose(tag) {
             this.xData.splice(this.xData.indexOf(tag), 1);
         },
@@ -119,6 +136,7 @@ export default {
             data.data.push(data.inputValue);
             data.inputValue = '';
             data.visible = false;
+            this.setSeriesData()
         },
         getObjData(type) {
             if(type == 'xAxis'){
@@ -151,7 +169,7 @@ export default {
             }
 
             option.xAxis = {
-                type: 'value',
+                type: 'category',
                 boundaryGap: false,
                 data: this.xAxis.data
             }
@@ -160,9 +178,19 @@ export default {
                 type: 'value'
             }
 
-            option.series = []
+            let series = this.handleSeriesData()
 
+            option.series = series;
+            console.log('option--->',option);
             myChart.setOption(option);
+        },
+        handleSeriesData() {
+            let dataArr = this.seriesItems.map(item => {
+                let str = JSON.parse(JSON.stringify(item))
+                str.data = str.data.split(',');
+                return str;
+            })
+            return dataArr;
         }
     }
 }
@@ -196,6 +224,16 @@ export default {
         .grap_content {
             width: 100%;
             height: 100%;
+        }
+    }
+
+    .data_box {
+         .item {
+            display: flex;
+            .item_name {
+                text-align: center;
+                line-height: 40px;
+            }
         }
     }
 </style>
