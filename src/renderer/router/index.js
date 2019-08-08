@@ -13,7 +13,11 @@ export default new Router({
     {
       path: '/',
       name: 'landing-page',
-      component: require('@/components/home').default
+      component: require('@/pages/home').default,
+      children : [
+        {path: '', component: require('@/pages/welcome').default},
+        {name: 'polygonalChart', path: 'polygonalChart', component: require('@/pages/polygonalChart').default}
+      ]
     },
     {
       path: '*',
