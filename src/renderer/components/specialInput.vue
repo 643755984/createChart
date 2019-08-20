@@ -8,8 +8,8 @@
             placeholder="请输入内容"
             @blur="handleInputConfirm"
             @keyup.enter.native="handleInputConfirm"
-            @input="changeData"
             v-model="inputVal">
+               <!-- @input="changeData" -->
         </el-input>
     </div>
 </template>
@@ -23,17 +23,11 @@ export default {
     },
     data() {
         return {
-            inputVal: '',
+            inputVal: this.itemData,
             isShow: true
         }
     },
-    mounted() {
-        this.inputVal = this.itemData;
-    },
     methods: {
-        changeData() {
-            this.$emit('inputEvent', this.inputVal)
-        },
         switchMode(isTrue) {
             this.isShow = isTrue;
             this.$nextTick(_ => {
